@@ -28,5 +28,17 @@ and replace the stock URL with either:
 
 Here, `7d` stands for a 7-day cooldown. You can use other values in the format of `14d` (for days) and `4h` (for hours).
 
-**Note**: while [Go's version immutability](https://go.dev/blog/supply-chain) really helps secure releases,
+## Usage
+
+Start the proxy before opening your editor:
+
+```bash
+vscode-cooldown
+```
+
+The proxy listens on port 8787 by default.
+
+## Warning
+
+**Please Note**: while [Go's version immutability](https://go.dev/blog/supply-chain) really helps secure releases,
 you are encouraged to fork this repo, so you're not dependent on my own security as a developer.
