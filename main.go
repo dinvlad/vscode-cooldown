@@ -76,30 +76,72 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 			return
 		}
 
-		var q ExtensionQueryResponse
+		// parsing response as nested maps, because we need
+		// to preserve all fields for transparent proxying
+
+		var q map[string]any
 		if err := json.Unmarshal(body, &q); err != nil {
 			http.Error(w, err.Error(), http.StatusBadGateway)
 			return
 		}
 
+		results, ok := q["results"].([]any)
+		if !ok {
+			http.Error(w, "invalid response: 'results' array not found", http.StatusBadGateway)
+			return
+		}
+
 		cutoff := time.Now().Add(-duration)
-		for ri := range q.Results {
-			res := &q.Results[ri]
-			for ei := range res.Extensions {
-				ext := &res.Extensions[ei]
-				vers := []Version{}
-				for _, v := range ext.Versions {
-					if t, err := time.Parse(time.RFC3339, v.LastUpdated); err != nil {
+		for _, re := range results {
+			res, ok := re.(map[string]any)
+			if !ok {
+				continue
+			}
+			extensions, ok := res["extensions"].([]any)
+			if !ok {
+				continue
+			}
+			for _, ex := range extensions {
+				ext, ok := ex.(map[string]any)
+				if !ok {
+					continue
+				}
+
+				pubName := ""
+				publisher, ok := ext["publisher"].(map[string]any)
+				if ok {
+					pubName, _ = publisher["publisherName"].(string)
+				}
+				extName, _ := ext["extensionName"].(string)
+				versions, ok := ext["versions"].([]any)
+				if !ok {
+					continue
+				}
+
+				vers := []any{}
+				for _, ve := range versions {
+					v, ok := ve.(map[string]any)
+					if !ok {
+						continue
+					}
+					lastUpdated, ok := v["lastUpdated"].(string)
+					if !ok {
+						continue
+					}
+					t, err := time.Parse(time.RFC3339, lastUpdated)
+					if err != nil {
 						log.Println(err)
 						continue
-					} else if t.Before(cutoff) {
+					}
+					if t.Before(cutoff) {
 						vers = append(vers, v)
 					} else {
+						vs, _ := v["version"].(string)
 						log.Printf("filtered: %s.%s@%s (published %s)",
-							ext.Publisher.PublisherName, ext.ExtensionName, v.Version, t.Format("2006-01-02 15:04:05"))
+							pubName, extName, vs, t.Format("2006-01-02 15:04:05"))
 					}
 				}
-				ext.Versions = vers
+				ext["versions"] = vers
 			}
 		}
 
@@ -115,23 +157,6 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 			log.Println(err)
 		}
 	}
-}
-
-type ExtensionQueryResponse struct {
-	Results []struct {
-		Extensions []struct {
-			ExtensionName string `json:"extensionName"`
-			Publisher     struct {
-				PublisherName string `json:"publisherName"`
-			} `json:"publisher"`
-			Versions []Version `json:"versions"`
-		} `json:"extensions"`
-	} `json:"results"`
-}
-
-type Version struct {
-	Version     string `json:"version"`
-	LastUpdated string `json:"lastUpdated"`
 }
 
 func parseDuration(d string) (time.Duration, error) {
