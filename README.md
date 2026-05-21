@@ -41,4 +41,5 @@ The proxy listens on port 8787 by default.
 ## Warning
 
 **Please Note**: while [Go's version immutability](https://go.dev/blog/supply-chain) really helps secure releases,
-you are encouraged to fork this repo, so you're not dependent on my own security as a developer.
+you are encouraged to fork this repo and check its code,
+so you're not dependent on my own security as a developer.
