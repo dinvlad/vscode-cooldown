@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"maps"
@@ -31,7 +30,7 @@ func main() {
 	mux.HandleFunc("POST /openvsx/{duration}/{path...}", proxyHandler(openvsxMktplace))
 
 	addr := net.JoinHostPort("localhost", strconv.Itoa(*port))
-	fmt.Printf("listening on http://%s\n", addr)
+	log.Printf("listening on http://%s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, mux))
 }
 
@@ -137,7 +136,7 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 						vers = append(vers, v)
 					} else {
 						vs, _ := v["version"].(string)
-						log.Printf("filtered: %s.%s@%s (published %s)",
+						log.Printf("excluding %s.%s@%s (published %s)",
 							pubName, extName, vs, t.Format("2006-01-02 15:04:05"))
 					}
 				}
