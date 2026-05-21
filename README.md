@@ -1,2 +1,23 @@
-# vscode-cooldown
-Local proxy to provide VS Code extension cooldown to protect against supply-chain attacks
+# VS Code Cooldown Proxy
+
+A lightweight Go proxy that filters VS Code extension versions by publish age to mitigate supply-chain attacks.
+
+This ensures you only install extensions that have been publicly available for a cooldown period (e.g., 7 days).
+The vast majority of supply-chain attacks get detected within the first 7-14 days,
+so while not a panacea, this method is very effective.
+
+## Install
+
+```bash
+go install github.com/dinvlad/vscode-cooldown@latest # or pin by commit hash, e.g. @80b47dd
+```
+
+## Configuration
+
+In VS Code and VS Code-based IDEs like Cursor, navigate to "Gallery Service URL" in Settings,
+and replace the stock URL with either:
+
+- `http://localhost:8787/vscode/7d` (for VS Code Marketplace)
+- `http://localhost:8787/openvsx/7d` (for Open VSX Marketplace)
+
+Here, `7d` stands for a 7-day cooldown. You can use other values in the format of `14d` (for days) and `4h` (for hours).
