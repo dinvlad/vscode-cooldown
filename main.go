@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -44,7 +45,7 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 
 		req := r.Clone(r.Context())
 		req.URL.Scheme, req.URL.Host = mktplace.Scheme, mktplace.Host
-		req.URL.Path = "/" + r.PathValue("path")
+		req.URL.Path = path.Join(mktplace.Path, r.PathValue("path"))
 		req.RequestURI, req.Host = "", ""
 
 		resp, err := c.Do(req)
