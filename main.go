@@ -80,6 +80,7 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 		req.URL.Scheme, req.URL.Host = mktplace.Scheme, mktplace.Host
 		req.URL.Path = path.Join(mktplace.Path, r.PathValue("path"))
 		req.RequestURI, req.Host = "", ""
+		req.Header.Del("Accept-Encoding")
 
 		resp, err := c.Do(req)
 		if err != nil {
@@ -185,6 +186,8 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 
 func writeResponse(w http.ResponseWriter, resp *http.Response, body []byte) {
 	maps.Copy(w.Header(), resp.Header)
+	w.Header().Del("Content-Encoding")
+	w.Header().Del("Content-Length")
 	w.WriteHeader(resp.StatusCode)
 	if _, err := w.Write(body); err != nil {
 		log.Println(err)
