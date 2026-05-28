@@ -83,6 +83,11 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 		req.Header.Del("Accept-Encoding")
 		req.Header.Del("User-Agent")
 
+		if req.Method == http.MethodGet && strings.HasSuffix(req.URL.Path, "/latest") {
+			http.Error(w, "not implemented", http.StatusNotImplemented)
+			return
+		}
+
 		resp, err := c.Do(req)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadGateway)
