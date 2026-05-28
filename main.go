@@ -35,15 +35,18 @@ func main() {
 	port := flag.Int("port", 8787, "port to listen on")
 	flag.Parse()
 
+	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(*port))
+	log.Printf("listening on http://%s\n", addr)
+	log.Fatal(http.ListenAndServe(addr, newHandler()))
+}
+
+func newHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET  /vscode/{duration}/{path...}", proxyHandler(vscodeMktplace))
 	mux.HandleFunc("POST /vscode/{duration}/{path...}", proxyHandler(vscodeMktplace))
 	mux.HandleFunc("GET  /openvsx/{duration}/{path...}", proxyHandler(openvsxMktplace))
 	mux.HandleFunc("POST /openvsx/{duration}/{path...}", proxyHandler(openvsxMktplace))
-
-	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(*port))
-	log.Printf("listening on http://%s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, logRequests(withCORS(mux))))
+	return logRequests(withCORS(mux))
 }
 
 func withCORS(next http.Handler) http.Handler {
