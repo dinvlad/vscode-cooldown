@@ -19,7 +19,16 @@ import (
 var (
 	vscodeMktplace, _  = url.Parse("https://marketplace.visualstudio.com/_apis/public/gallery")
 	openvsxMktplace, _ = url.Parse("https://open-vsx.org")
-	c                  = &http.Client{}
+
+	allowedOrigins = map[string]bool{
+		"vscode-file://vscode-app": true,
+	}
+
+	c = &http.Client{}
+)
+
+const (
+	allowedMethods = "GET, POST, OPTIONS"
 )
 
 func main() {
@@ -32,7 +41,29 @@ func main() {
 
 	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(*port))
 	log.Printf("listening on http://%s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, mux))
+	log.Fatal(http.ListenAndServe(addr, withCORS(mux)))
+}
+
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if !allowedOrigins[origin] {
+			http.Error(w, "forbidden origin", http.StatusForbidden)
+			return
+		}
+
+		h := w.Header()
+		h.Set("Access-Control-Allow-Origin", origin)
+		h.Set("Access-Control-Allow-Methods", allowedMethods)
+		h.Set("Access-Control-Allow-Headers", r.Header.Get("Access-Control-Request-Headers"))
+		h.Set("Vary", "Origin")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func proxyHandler(mktplace *url.URL) http.HandlerFunc {
