@@ -15,7 +15,7 @@ to avoid further supply-chain attacks through those.
 ## Install
 
 ```bash
-go install github.com/dinvlad/vscode-cooldown@v0.1.2 # or use @latest at your own risk
+go install github.com/dinvlad/vscode-cooldown@v0.1.3 # or use @latest at your own risk
 ```
 
 ## Configuration
