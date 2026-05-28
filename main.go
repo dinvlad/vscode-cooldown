@@ -88,7 +88,7 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 			return
 		}
 		defer func() {
-			log.Printf("%s : %d", req.URL.String(), resp.StatusCode)
+			log.Printf("%s %s : %d", req.Method, req.URL.String(), resp.StatusCode)
 			if err := resp.Body.Close(); err != nil {
 				log.Printf("error closing response body: %v", err)
 			}
