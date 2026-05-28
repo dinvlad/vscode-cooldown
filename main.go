@@ -18,7 +18,7 @@ import (
 
 var (
 	vscodeMktplace, _  = url.Parse("https://marketplace.visualstudio.com/_apis/public/gallery")
-	openvsxMktplace, _ = url.Parse("https://open-vsx.org")
+	openvsxMktplace, _ = url.Parse("https://open-vsx.org/vscode/gallery")
 
 	allowedOrigins = map[string]bool{
 		"vscode-file://vscode-app": true,
