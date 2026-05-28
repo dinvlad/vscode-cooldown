@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	vscodeMktplace, _  = url.Parse("https://marketplace.visualstudio.com")
+	vscodeMktplace, _  = url.Parse("https://marketplace.visualstudio.com/_apis/public/gallery")
 	openvsxMktplace, _ = url.Parse("https://open-vsx.org")
 	c                  = &http.Client{}
 )
