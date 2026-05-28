@@ -29,7 +29,7 @@ func main() {
 	mux.HandleFunc("POST /vscode/{duration}/{path...}", proxyHandler(vscodeMktplace))
 	mux.HandleFunc("POST /openvsx/{duration}/{path...}", proxyHandler(openvsxMktplace))
 
-	addr := net.JoinHostPort("localhost", strconv.Itoa(*port))
+	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(*port))
 	log.Printf("listening on http://%s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, mux))
 }

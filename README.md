@@ -23,12 +23,10 @@ go install github.com/dinvlad/vscode-cooldown@v0.1.1 # or use @latest at your ow
 In VS Code and VS Code-based IDEs like Cursor, navigate to "Gallery Service URL" in Settings,
 and replace the stock URL with either:
 
-- `http://localhost:8787/vscode/7d/` (for VS Code Marketplace)
-- `http://localhost:8787/openvsx/7d/` (for Open VSX Marketplace)
+- `http://127.0.0.1:8787/vscode/7d` (for VS Code Marketplace)
+- `http://127.0.0.1:8787/openvsx/7d` (for Open VSX Marketplace)
 
 Here, `7d` stands for a 7-day cooldown. You can use other values in the format of `14d` (for days) and `4h` (for hours).
-
-Please note: there needs to be a `/` at the end of those URLs.
 
 ## Usage
 
