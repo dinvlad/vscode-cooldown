@@ -14,7 +14,7 @@ to avoid further supply-chain attacks through those.
 
 ## Configuration
 
-In VS Code and VS Code-based IDEs like Cursor, navigate to "Gallery Service URL" in Settings,
+In VS Code-based editors like Cursor and Windsurf, navigate to "Gallery Service URL" in Settings,
 and replace the stock URL with either:
 
 - `http://127.0.0.1:8787/vscode/7d` (for VS Code Marketplace)
@@ -22,6 +22,7 @@ and replace the stock URL with either:
 
 Here, `7d` stands for a 7-day cooldown. You can use other values in the format of `14d` (for days) and `4h` (for hours).
 
+**Please note**: official VS Code does NOT currently expose this setting: https://github.com/microsoft/vscode/issues/179919
 ## Usage
 
 Start the proxy before opening your editor:
