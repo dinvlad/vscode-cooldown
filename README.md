@@ -1,4 +1,4 @@
-# VS Code Cooldown Proxy
+# VS Code Extension Cooldown Proxy
 
 A lightweight proxy that filters VS Code extension versions by publish age to mitigate supply-chain attacks.
 
