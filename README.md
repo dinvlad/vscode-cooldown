@@ -12,12 +12,6 @@ omitting any recent versions according to the configured proxy URL.
 The proxy is intentionally written in pure-Go with no external dependencies,
 to avoid further supply-chain attacks through those.
 
-## Install
-
-```bash
-go install github.com/dinvlad/vscode-cooldown@v0.1.2 # or use @latest at your own risk
-```
-
 ## Configuration
 
 In VS Code and VS Code-based IDEs like Cursor, navigate to "Gallery Service URL" in Settings,
@@ -33,7 +27,7 @@ Here, `7d` stands for a 7-day cooldown. You can use other values in the format o
 Start the proxy before opening your editor:
 
 ```bash
-vscode-cooldown
+go run github.com/dinvlad/vscode-cooldown@v0.1.3 # or use @latest at your own risk
 ```
 
 The proxy listens on port 8787 by default.
