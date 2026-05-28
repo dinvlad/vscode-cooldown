@@ -43,7 +43,7 @@ func main() {
 
 	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(*port))
 	log.Printf("listening on http://%s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, withCORS(mux)))
+	log.Fatal(http.ListenAndServe(addr, logRequests(withCORS(mux))))
 }
 
 func withCORS(next http.Handler) http.Handler {
@@ -94,7 +94,6 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 			return
 		}
 		defer func() {
-			log.Printf("%-4s %s : %d", req.Method, req.URL.String(), resp.StatusCode)
 			if err := resp.Body.Close(); err != nil {
 				log.Printf("error closing response body: %v", err)
 			}
@@ -188,6 +187,26 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 
 		writeResponse(w, resp, body)
 	}
+}
+
+type responseRecorder struct {
+	http.ResponseWriter
+	status int
+}
+
+func (rr *responseRecorder) WriteHeader(status int) {
+	rr.status = status
+	rr.ResponseWriter.WriteHeader(status)
+}
+
+func logRequests(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rr := &responseRecorder{ResponseWriter: w, status: http.StatusOK}
+		next.ServeHTTP(rr, r)
+		if !(r.Method == http.MethodOptions && rr.status == http.StatusNoContent) {
+			log.Printf("%-4s %s : %d", r.Method, r.URL.String(), rr.status)
+		}
+	})
 }
 
 func writeResponse(w http.ResponseWriter, resp *http.Response, body []byte) {
