@@ -36,7 +36,9 @@ func main() {
 	flag.Parse()
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET  /vscode/{duration}/{path...}", proxyHandler(vscodeMktplace))
 	mux.HandleFunc("POST /vscode/{duration}/{path...}", proxyHandler(vscodeMktplace))
+	mux.HandleFunc("GET  /openvsx/{duration}/{path...}", proxyHandler(openvsxMktplace))
 	mux.HandleFunc("POST /openvsx/{duration}/{path...}", proxyHandler(openvsxMktplace))
 
 	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(*port))
@@ -97,13 +99,8 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 			return
 		}
 
-		if resp.StatusCode >= 400 {
-			maps.Copy(w.Header(), resp.Header)
-			w.WriteHeader(resp.StatusCode)
-			if _, err := w.Write(body); err != nil {
-				log.Printf("%+v", err)
-				return
-			}
+		if resp.StatusCode >= 400 || r.Method == http.MethodGet {
+			writeResponse(w, resp, body)
 			return
 		}
 
@@ -182,11 +179,15 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 			return
 		}
 
-		maps.Copy(w.Header(), resp.Header)
-		w.WriteHeader(resp.StatusCode)
-		if _, err = w.Write(body); err != nil {
-			log.Println(err)
-		}
+		writeResponse(w, resp, body)
+	}
+}
+
+func writeResponse(w http.ResponseWriter, resp *http.Response, body []byte) {
+	maps.Copy(w.Header(), resp.Header)
+	w.WriteHeader(resp.StatusCode)
+	if _, err := w.Write(body); err != nil {
+		log.Println(err)
 	}
 }
 
