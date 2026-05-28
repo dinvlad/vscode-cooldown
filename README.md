@@ -27,7 +27,7 @@ Here, `7d` stands for a 7-day cooldown. You can use other values in the format o
 Start the proxy before opening your editor:
 
 ```bash
-go run github.com/dinvlad/vscode-cooldown@v0.1.4 # or use @latest at your own risk
+go run github.com/dinvlad/vscode-cooldown@v0.1.5 # or use @latest at your own risk
 ```
 
 The proxy listens on port 8787 by default.
