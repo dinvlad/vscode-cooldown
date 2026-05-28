@@ -81,6 +81,7 @@ func proxyHandler(mktplace *url.URL) http.HandlerFunc {
 		req.URL.Path = path.Join(mktplace.Path, r.PathValue("path"))
 		req.RequestURI, req.Host = "", ""
 		req.Header.Del("Accept-Encoding")
+		req.Header.Del("User-Agent")
 
 		resp, err := c.Do(req)
 		if err != nil {
